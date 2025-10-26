@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import slugify from 'slugify';
 import { Tag } from './entities/tag.entity';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
@@ -16,18 +17,25 @@ export class TagsService {
     private tagRepository: Repository<Tag>,
   ) {}
 
+  private generateSlug(name: string): string {
+    return slugify(name, { lower: true, strict: true });
+  }
+
   async create(createTagDto: CreateTagDto): Promise<Tag> {
+    const slug = this.generateSlug(createTagDto.name);
+
     const existingSlug = await this.tagRepository.findOne({
-      where: { slug: createTagDto.slug },
+      where: { slug },
     });
 
     if (existingSlug) {
-      throw new ConflictException(
-        `Tag with slug '${createTagDto.slug}' already exists`,
-      );
+      throw new ConflictException(`Tag with slug '${slug}' already exists`);
     }
 
-    const tag = this.tagRepository.create(createTagDto);
+    const tag = this.tagRepository.create({
+      ...createTagDto,
+      slug,
+    });
     return this.tagRepository.save(tag);
   }
 
@@ -51,15 +59,22 @@ export class TagsService {
   async update(id: string, updateTagDto: UpdateTagDto): Promise<Tag> {
     const tag = await this.findOne(id);
 
-    if (updateTagDto.slug && updateTagDto.slug !== tag.slug) {
-      const existingSlug = await this.tagRepository.findOne({
-        where: { slug: updateTagDto.slug },
-      });
+    // If name is being updated, regenerate slug
+    if (updateTagDto.name && updateTagDto.name !== tag.name) {
+      const newSlug = this.generateSlug(updateTagDto.name);
 
-      if (existingSlug) {
-        throw new ConflictException(
-          `Tag with slug '${updateTagDto.slug}' already exists`,
-        );
+      if (newSlug !== tag.slug) {
+        const existingSlug = await this.tagRepository.findOne({
+          where: { slug: newSlug },
+        });
+
+        if (existingSlug) {
+          throw new ConflictException(
+            `Tag with slug '${newSlug}' already exists`,
+          );
+        }
+
+        tag.slug = newSlug;
       }
     }
 

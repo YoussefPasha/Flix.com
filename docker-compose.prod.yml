@@ -1,0 +1,136 @@
+# Production Docker Compose - Full Stack with Traefik
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: flix_postgres_prod
+    restart: always
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DATABASE_USER}']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - flix-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: flix_backend_prod
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_NAME: ${DATABASE_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.backend.rule=Host(`${BACKEND_DOMAIN:-api.flix.com}`)'
+      - 'traefik.http.routers.backend.entrypoints=websecure'
+      - 'traefik.http.routers.backend.tls.certresolver=myresolver'
+      - 'traefik.http.services.backend.loadbalancer.server.port=3000'
+      - 'traefik.http.middlewares.backend-headers.headers.customrequestheaders.Access-Control-Allow-Origin=*'
+      - 'traefik.http.middlewares.backend-headers.headers.customrequestheaders.Access-Control-Allow-Methods=GET,POST,PUT,DELETE,PATCH,OPTIONS'
+      - 'traefik.http.middlewares.backend-headers.headers.customrequestheaders.Access-Control-Allow-Headers=*'
+      - 'traefik.http.middlewares.request-size-limit.buffering.maxRequestBodyBytes=104857600'
+      - 'traefik.http.routers.backend.middlewares=request-size-limit,backend-headers'
+    networks:
+      - flix-network
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: flix_frontend_prod
+    restart: always
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.flix.com}
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.frontend.rule=Host(`${FRONTEND_DOMAIN:-flix.com}`) || Host(`www.${FRONTEND_DOMAIN:-flix.com}`)'
+      - 'traefik.http.routers.frontend.entrypoints=websecure'
+      - 'traefik.http.routers.frontend.tls.certresolver=myresolver'
+      - 'traefik.http.services.frontend.loadbalancer.server.port=3000'
+      # Redirect www to non-www
+      - 'traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www\\.(.+)'
+      - 'traefik.http.middlewares.www-redirect.redirectregex.replacement=https://$${1}'
+      - 'traefik.http.middlewares.www-redirect.redirectregex.permanent=true'
+      # Security headers
+      - 'traefik.http.middlewares.security-headers.headers.frameDeny=true'
+      - 'traefik.http.middlewares.security-headers.headers.contentTypeNosniff=true'
+      - 'traefik.http.middlewares.security-headers.headers.browserXssFilter=true'
+      - 'traefik.http.middlewares.security-headers.headers.stsSeconds=31536000'
+      - 'traefik.http.middlewares.security-headers.headers.stsIncludeSubdomains=true'
+      - 'traefik.http.middlewares.security-headers.headers.stsPreload=true'
+      - 'traefik.http.routers.frontend.middlewares=www-redirect,security-headers'
+    networks:
+      - flix-network
+
+  traefik:
+    image: traefik:v3.0
+    container_name: flix_traefik
+    restart: always
+    command:
+      - --log.level=${TRAEFIK_LOG_LEVEL:-INFO}
+      - --accesslog=true
+      - --accesslog.filepath=/var/log/traefik/access.log
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=flix-network
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      # SSL Configuration
+      - --certificatesresolvers.myresolver.acme.httpchallenge=true
+      - --certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.myresolver.acme.email=${ACME_EMAIL:-youssefbashafcis@gmail.com}
+      - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      # HTTP to HTTPS redirect
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.web.http.redirections.entrypoint.permanent=true
+      # Dashboard (optional - comment out in production)
+      # - --api.dashboard=true
+      # - --api.insecure=true
+    ports:
+      - '80:80'
+      - '443:443'
+      # Dashboard port (optional)
+      # - '8080:8080'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik_letsencrypt:/letsencrypt
+      - traefik_logs:/var/log/traefik
+    networks:
+      - flix-network
+    healthcheck:
+      test: ['CMD', 'traefik', 'healthcheck', '--ping']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_prod_data:
+  traefik_letsencrypt:
+  traefik_logs:
+
+networks:
+  flix-network:
+    driver: bridge
+

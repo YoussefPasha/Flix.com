@@ -7,11 +7,6 @@ export class CreateGenreDto {
   @MaxLength(100)
   name: string;
 
-  @ApiProperty({ example: 'action', description: 'Genre slug' })
-  @IsString()
-  @MaxLength(100)
-  slug: string;
-
   @ApiPropertyOptional({
     example: 'High-energy action films',
     description: 'Genre description',

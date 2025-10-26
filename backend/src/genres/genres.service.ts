@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import slugify from 'slugify';
 import { Genre } from './entities/genre.entity';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
@@ -16,18 +17,25 @@ export class GenresService {
     private genreRepository: Repository<Genre>,
   ) {}
 
+  private generateSlug(name: string): string {
+    return slugify(name, { lower: true, strict: true });
+  }
+
   async create(createGenreDto: CreateGenreDto): Promise<Genre> {
+    const slug = this.generateSlug(createGenreDto.name);
+
     const existingSlug = await this.genreRepository.findOne({
-      where: { slug: createGenreDto.slug },
+      where: { slug },
     });
 
     if (existingSlug) {
-      throw new ConflictException(
-        `Genre with slug '${createGenreDto.slug}' already exists`,
-      );
+      throw new ConflictException(`Genre with slug '${slug}' already exists`);
     }
 
-    const genre = this.genreRepository.create(createGenreDto);
+    const genre = this.genreRepository.create({
+      ...createGenreDto,
+      slug,
+    });
     return this.genreRepository.save(genre);
   }
 
@@ -67,15 +75,22 @@ export class GenresService {
   async update(id: string, updateGenreDto: UpdateGenreDto): Promise<Genre> {
     const genre = await this.findOne(id);
 
-    if (updateGenreDto.slug && updateGenreDto.slug !== genre.slug) {
-      const existingSlug = await this.genreRepository.findOne({
-        where: { slug: updateGenreDto.slug },
-      });
+    // If name is being updated, regenerate slug
+    if (updateGenreDto.name && updateGenreDto.name !== genre.name) {
+      const newSlug = this.generateSlug(updateGenreDto.name);
 
-      if (existingSlug) {
-        throw new ConflictException(
-          `Genre with slug '${updateGenreDto.slug}' already exists`,
-        );
+      if (newSlug !== genre.slug) {
+        const existingSlug = await this.genreRepository.findOne({
+          where: { slug: newSlug },
+        });
+
+        if (existingSlug) {
+          throw new ConflictException(
+            `Genre with slug '${newSlug}' already exists`,
+          );
+        }
+
+        genre.slug = newSlug;
       }
     }
 

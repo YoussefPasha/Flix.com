@@ -1,0 +1,39 @@
+# Production Docker Compose - Frontend Only
+# Note: This assumes Traefik is already running (from backend or root docker-compose)
+# For full stack deployment, use the root docker-compose.prod.yml instead
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flix_frontend_prod
+    restart: always
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://api.flix.com}
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.frontend.rule=Host(`${FRONTEND_DOMAIN:-flix.com}`) || Host(`www.${FRONTEND_DOMAIN:-flix.com}`)'
+      - 'traefik.http.routers.frontend.entrypoints=websecure'
+      - 'traefik.http.routers.frontend.tls.certresolver=myresolver'
+      - 'traefik.http.services.frontend.loadbalancer.server.port=3000'
+      # Redirect www to non-www
+      - 'traefik.http.middlewares.www-redirect.redirectregex.regex=^https://www\\.(.+)'
+      - 'traefik.http.middlewares.www-redirect.redirectregex.replacement=https://$${1}'
+      - 'traefik.http.middlewares.www-redirect.redirectregex.permanent=true'
+      # Security headers
+      - 'traefik.http.middlewares.security-headers.headers.frameDeny=true'
+      - 'traefik.http.middlewares.security-headers.headers.contentTypeNosniff=true'
+      - 'traefik.http.middlewares.security-headers.headers.browserXssFilter=true'
+      - 'traefik.http.middlewares.security-headers.headers.stsSeconds=31536000'
+      - 'traefik.http.routers.frontend.middlewares=www-redirect,security-headers'
+    ports:
+      - '${FRONTEND_PORT:-3001}:3000'
+    networks:
+      - backend_default  # Connect to backend's network where Traefik runs
+
+networks:
+  backend_default:
+    external: true  # Use the existing network from backend
+

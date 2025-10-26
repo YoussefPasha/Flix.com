@@ -45,6 +45,9 @@ services:
     ports:
       - '${PORT:-3000}:3000'
 
+  # Traefik reverse proxy with automatic SSL
+  # Note: This Traefik instance can be shared with frontend service
+  # For full stack deployment, use the root docker-compose.prod.yml instead
   traefik:
     image: traefik:v3.0
     command:
