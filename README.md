@@ -221,23 +221,41 @@ yarn test                    # Run tests (if configured)
 
 ## 🔐 Environment Variables
 
-### Backend (.env)
+Environment configuration files are located at:
+- **Root:** `env.sample` - Full stack configuration
+- **Backend:** `backend/env.sample` - Backend-specific
+- **Frontend:** `client/env.sample` - Frontend-specific
 
-```env
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
-DATABASE_USER=postgres
-DATABASE_PASSWORD=your_password
-DATABASE_NAME=flix_db
-JWT_SECRET=your_secret_key
-PORT=3000
+### Quick Setup
+
+```bash
+# Full stack (recommended)
+cp env.sample .env
+
+# Backend only
+cd backend && cp env.sample .env
+
+# Frontend only
+cd client && cp env.sample .env.local
 ```
 
-### Frontend (.env.local)
+### Key Variables
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3000
-```
+**Backend:**
+- `DATABASE_*` - PostgreSQL connection
+- `JWT_SECRET` - Authentication secret (change in production!)
+- `CORS_ORIGINS` - Allowed frontend origins
+
+**Frontend:**
+- `NEXT_PUBLIC_API_URL` - Backend API endpoint
+- `FRONTEND_PORT` - Port for frontend (default: 3001)
+
+**Production:**
+- `FRONTEND_DOMAIN` - Your frontend domain (e.g., flix.com)
+- `BACKEND_DOMAIN` - Your API domain (e.g., api.flix.com)
+- `ACME_EMAIL` - Email for SSL certificates
+
+For complete configuration guide, see [ENV-SETUP.md](./ENV-SETUP.md)
 
 ## 🛠️ Tech Stack
 
@@ -268,9 +286,10 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 ### 📘 Main Guides
 
 - **[QUICK-START.md](./QUICK-START.md)** - ⚡ One-command setup guide (start here!)
-- **[DOCKER.md](./DOCKER.md)** - Comprehensive Docker guide (production setup)
-- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - All deployment scenarios and workflows
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System architecture and design decisions
+- **[ENV-SETUP.md](./ENV-SETUP.md)** - 🔐 Environment variables configuration
+- **[DOCKER.md](./DOCKER.md)** - 🐳 Comprehensive Docker guide (production setup)
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)** - 🚀 All deployment scenarios and workflows
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - 🏗️ System architecture and design decisions
 
 ### 📄 Component Documentation
 
