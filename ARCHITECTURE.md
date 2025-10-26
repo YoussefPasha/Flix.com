@@ -370,5 +370,4 @@ docker port flix_frontend_prod
 - **Easy to scale** horizontally or vertically
 - **Simple to maintain** with Docker Compose
 
-For detailed setup instructions, see [DOCKER.md](./DOCKER.md).
 

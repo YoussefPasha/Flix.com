@@ -1,6 +1,8 @@
-import { ApiError } from '@/types/api';
+import { ApiError } from "@/types/api";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+console.log(API_BASE_URL, process.env.NEXT_PUBLIC_API_URL);
 
 export class ApiClientError extends Error {
   constructor(
@@ -9,7 +11,7 @@ export class ApiClientError extends Error {
     public details?: unknown
   ) {
     super(message);
-    this.name = 'ApiClientError';
+    this.name = "ApiClientError";
   }
 }
 
@@ -27,7 +29,7 @@ export async function apiClient<T>(
   if (params) {
     const searchParams = new URLSearchParams();
     Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== '') {
+      if (value !== undefined && value !== null && value !== "") {
         searchParams.append(key, String(value));
       }
     });
@@ -40,7 +42,7 @@ export async function apiClient<T>(
   try {
     const response = await fetch(url, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         ...headers,
       },
       ...fetchOptions,
@@ -55,7 +57,7 @@ export async function apiClient<T>(
     if (!response.ok) {
       const error = data as ApiError;
       throw new ApiClientError(
-        error.message || 'An error occurred',
+        error.message || "An error occurred",
         response.status,
         error
       );
@@ -68,7 +70,7 @@ export async function apiClient<T>(
     }
 
     throw new ApiClientError(
-      error instanceof Error ? error.message : 'Network error',
+      error instanceof Error ? error.message : "Network error",
       0,
       error
     );
@@ -77,31 +79,29 @@ export async function apiClient<T>(
 
 export const api = {
   get: <T>(endpoint: string, options?: FetchOptions) =>
-    apiClient<T>(endpoint, { ...options, method: 'GET' }),
+    apiClient<T>(endpoint, { ...options, method: "GET" }),
 
   post: <T>(endpoint: string, data?: unknown, options?: FetchOptions) =>
     apiClient<T>(endpoint, {
       ...options,
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify(data),
     }),
 
   patch: <T>(endpoint: string, data?: unknown, options?: FetchOptions) =>
     apiClient<T>(endpoint, {
       ...options,
-      method: 'PATCH',
+      method: "PATCH",
       body: JSON.stringify(data),
     }),
 
   put: <T>(endpoint: string, data?: unknown, options?: FetchOptions) =>
     apiClient<T>(endpoint, {
       ...options,
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(data),
     }),
 
   delete: <T>(endpoint: string, options?: FetchOptions) =>
-    apiClient<T>(endpoint, { ...options, method: 'DELETE' }),
+    apiClient<T>(endpoint, { ...options, method: "DELETE" }),
 };
-
-

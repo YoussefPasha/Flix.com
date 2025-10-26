@@ -62,10 +62,8 @@ client/
 
 ```bash
 # Install packages
-yarn add @tanstack/react-query react-hook-form @hookform/resolvers zod date-fns
+yarn
 
-# Install shadcn/ui components
-npx shadcn@latest add button card input label table dialog form select badge textarea dropdown-menu separator skeleton toast tabs alert checkbox
 ```
 
 ### 2. Environment Setup
