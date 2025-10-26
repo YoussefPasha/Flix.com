@@ -246,7 +246,6 @@ DATABASE_PASSWORD=...
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - 6 deployment scenarios
 
 ### In-Depth Guides
-- **[DOCKER.md](./DOCKER.md)** - Complete Docker setup
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System design
 
 ### Component Docs
