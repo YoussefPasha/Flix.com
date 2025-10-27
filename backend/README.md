@@ -68,12 +68,6 @@ DATABASE_NAME=flix_db
 
 # Security
 JWT_SECRET=your-secret-key-change-in-production
-
-# Optional: Cloud Storage (AWS S3, etc.)
-# AWS_S3_BUCKET=flix-media
-# AWS_REGION=us-east-1
-# AWS_ACCESS_KEY_ID=your-key
-# AWS_SECRET_ACCESS_KEY=your-secret
 ```
 
 ## 🐳 Running with Docker

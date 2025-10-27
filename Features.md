@@ -91,7 +91,6 @@ POST   /api/v1/admin/content/bulk      - Bulk import content
 **Features:**
 
 - Input validation with class-validator
-- Image upload handling (multer/cloud storage integration)
 - Video metadata storage
 - Content scheduling (publish dates)
 - Draft/Published status management
@@ -247,15 +246,6 @@ For admin endpoints, implement:
 - Role-based authorization (Admin, User)
 - Protect admin routes with `@UseGuards(JwtAuthGuard, RolesGuard)`
 
-### File Upload
-
-Install `@nestjs/platform-multer` for handling:
-
-- Thumbnail uploads
-- Trailer video uploads
-- Cast/crew images
-- Integration with cloud storage (AWS S3, Cloudinary)
-
 ### Validation & Error Handling
 
 - Use `class-validator` decorators in all DTOs
@@ -295,6 +285,4 @@ DATABASE_USER=postgres
 DATABASE_PASSWORD=password
 DATABASE_NAME=flix_db
 JWT_SECRET=your-secret-key
-AWS_S3_BUCKET=flix-media
-AWS_REGION=us-east-1
 ```

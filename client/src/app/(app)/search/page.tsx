@@ -36,7 +36,7 @@ function SearchPageContent() {
     : 0;
 
   return (
-    <div className="container py-8">
+    <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold mb-6">
         {filters.q ? `Search Results for "${filters.q}"` : 'Browse Content'}
       </h1>
@@ -54,7 +54,7 @@ function SearchPageContent() {
           {isLoading ? (
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
               {Array.from({ length: 8 }).map((_, i) => (
-                <Skeleton key={i} className="aspect-[2/3] w-full" />
+                <Skeleton key={i} className="aspect-2/3 w-full" />
               ))}
             </div>
           ) : searchResults && searchResults.data.length > 0 ? (
@@ -90,7 +90,7 @@ function SearchPageContent() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div className="container py-8"><Skeleton className="h-[600px] w-full" /></div>}>
+    <Suspense fallback={<div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><Skeleton className="h-[600px] w-full" /></div>}>
       <SearchPageContent />
     </Suspense>
   );

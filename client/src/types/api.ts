@@ -38,6 +38,8 @@ export interface Content {
   duration: number;
   type: ContentType;
   rating: string;
+  ratingCount?: number;
+  viewCount?: number;
   thumbnailUrl?: string;
   trailerUrl?: string;
   status: ContentStatus;
