@@ -6,15 +6,10 @@ import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/shared/data-table';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
-import { useContents } from '@/features/content/api/use-contents';
-import { useDeleteContent } from '@/features/content/api/use-delete-content';
-import { Content, ContentQueryParams } from '@/types/api';
-import {
-  formatReleaseDate,
-  formatRating,
-  getContentTypeLabel,
-} from '@/features/content/utils';
+import { useCastCrewList, useDeleteCastCrew } from '@/features/cast-crew/api/use-cast-crew';
+import { CastCrew } from '@/types/api';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,23 +21,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert';
 
-export default function ContentListPage() {
-  const [params, setParams] = useState<ContentQueryParams>({
-    page: 1,
-    limit: 10,
-  });
+export default function CastCrewListPage() {
+  const { data: castCrew, isLoading, error } = useCastCrewList();
   const [deleteId, setDeleteId] = useState<string | null>(null);
-
-  const { data, isLoading } = useContents(params);
-  const deleteMutation = useDeleteContent();
-
-  const handlePageChange = (page: number) => {
-    setParams((prev) => ({ ...prev, page }));
-  };
-
-  const handlePageSizeChange = (limit: number) => {
-    setParams({ ...params, limit, page: 1 });
-  };
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const deleteMutation = useDeleteCastCrew();
 
   const handleDelete = async () => {
     if (deleteId) {
@@ -51,49 +35,46 @@ export default function ContentListPage() {
     }
   };
 
-  const columns: Array<{
-    key: string;
-    title: string;
-    sortable?: boolean;
-    render?: (value: unknown, item: Content) => React.ReactNode;
-  }> = [
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPageSize(newPageSize);
+    setPage(1); // Reset to first page when changing page size
+  };
+
+  // Client-side pagination
+  const paginatedCastCrew = castCrew
+    ? castCrew.slice((page - 1) * pageSize, page * pageSize)
+    : [];
+
+  const columns = [
+    { key: 'name', title: 'Name', sortable: true },
     {
-      key: 'title',
-      title: 'Title',
-      sortable: true,
-    },
-    {
-      key: 'type',
-      title: 'Type',
-      render: (_: unknown, item: Content) => (
-        <Badge variant="secondary">{getContentTypeLabel(item.type)}</Badge>
-      ),
-    },
-    {
-      key: 'releaseDate',
-      title: 'Release Date',
-      render: (value: unknown) => formatReleaseDate(value as string),
-      sortable: true,
-    },
-    {
-      key: 'rating',
-      title: 'Rating',
-      render: (value: unknown) => formatRating(value as number),
-      sortable: true,
-    },
-    {
-      key: 'status',
-      title: 'Status',
+      key: 'role',
+      title: 'Role',
       render: (value: unknown) => (
-        <Badge variant="outline">{String(value)}</Badge>
+        <Badge variant="secondary" className="capitalize">
+          {String(value)}
+        </Badge>
       ),
+      sortable: true,
+    },
+    {
+      key: 'bio',
+      title: 'Bio',
+      render: (value: unknown) => {
+        const bio = value as string | undefined;
+        return bio ? (
+          <span className="line-clamp-1">{bio}</span>
+        ) : (
+          <span className="text-muted-foreground">-</span>
+        );
+      },
     },
     {
       key: 'actions',
       title: 'Actions',
-      render: (_: unknown, item: Content) => (
+      render: (_: unknown, item: CastCrew) => (
         <div className="flex items-center gap-2">
-          <Link href={`/dashboard/content/${item.id}`}>
+          <Link href={`/dashboard/cast-crew/${item.id}`}>
             <Button variant="ghost" size="sm">
               <Pencil className="h-4 w-4" />
             </Button>
@@ -113,32 +94,38 @@ export default function ContentListPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Content</h1>
-        <Link href="/dashboard/content/new">
+        <h1 className="text-3xl font-bold">Cast & Crew</h1>
+        <Link href="/dashboard/cast-crew/new">
           <Button>
             <Plus className="h-4 w-4 mr-2" />
-            Add Content
+            Add Cast/Crew
           </Button>
         </Link>
       </div>
 
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>Failed to load cast & crew</AlertDescription>
+        </Alert>
+      )}
+
       {isLoading ? (
         <Skeleton className="h-[400px] w-full" />
-      ) : data && data.total > 0 ? (
-        <DataTable<Content>
+      ) : castCrew && castCrew.length > 0 ? (
+        <DataTable
           columns={columns}
-          data={data.data || []}
+          data={paginatedCastCrew}
           pagination={{
-            page: data.page || 1,
-            pageSize: data.limit || 10,
-            total: data.total,
-            onPageChange: handlePageChange,
+            page,
+            pageSize,
+            total: castCrew.length,
+            onPageChange: setPage,
             onPageSizeChange: handlePageSizeChange,
           }}
         />
       ) : (
         <div className="text-center py-12 border rounded-lg">
-          <p className="text-muted-foreground">No content found</p>
+          <p className="text-muted-foreground">No cast & crew found</p>
         </div>
       )}
 
@@ -147,7 +134,7 @@ export default function ContentListPage() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the content.
+              This action cannot be undone. This will permanently delete this cast/crew member.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
