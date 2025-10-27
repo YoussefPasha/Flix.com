@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Film, Tag, Layers, Users } from 'lucide-react';
-import { useContents } from '@/features/content/api/use-contents';
-import { useTags } from '@/features/tags/api/use-tags';
-import { useGenres } from '@/features/genres/api/use-genres';
-import { useCastCrewList } from '@/features/cast-crew/api/use-cast-crew';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Film, Tag, Layers, Users } from "lucide-react";
+import { useContents } from "@/features/content/api/use-contents";
+import { useTags } from "@/features/tags/api/use-tags";
+import { useGenres } from "@/features/genres/api/use-genres";
+import { useCastCrewList } from "@/features/cast-crew/api/use-cast-crew";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function StatCard({
   title,
@@ -76,17 +76,6 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Activity tracking coming soon...
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
             <CardTitle>Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -120,4 +109,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
