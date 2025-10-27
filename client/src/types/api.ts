@@ -165,9 +165,10 @@ export interface SearchQueryParams {
   type?: ContentType;
   genre?: string;
   year?: number;
-  rating?: string;
+  minRating?: string;
+  maxRating?: string;
   sort?: string;
-  order?: 'asc' | 'desc';
+  order?: "asc" | "desc";
   page?: number;
   limit?: number;
 }
