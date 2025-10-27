@@ -21,7 +21,7 @@ export function Sidebar() {
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r bg-background">
       <div className="flex h-16 items-center border-b px-6">
         <Link href="/dashboard" className="flex items-center space-x-2">
-          <span className="text-xl font-bold">FlixCMS Admin</span>
+          <span className="text-xl font-bold">Flix Admin</span>
         </Link>
       </div>
       <nav className="space-y-1 p-4">

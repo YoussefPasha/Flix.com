@@ -39,7 +39,7 @@ export default async function HomePage() {
           <div className="flex items-center justify-center gap-3 mb-4">
             <Film className="h-10 w-10 md:h-12 md:w-12 text-primary" />
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              FlixCMS
+              Flix
             </h1>
           </div>
           <p className="text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-2xl mx-auto">

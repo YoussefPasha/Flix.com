@@ -7,7 +7,7 @@ export function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="text-xl font-bold">FlixCMS</span>
+            <span className="text-xl font-bold">Flix</span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
             <Link

@@ -1,4 +1,4 @@
-# FlixCMS Client - Next.js Application
+# Flix Client - Next.js Application
 
 A fully modular Next.js CMS client with SSR public pages and CSR admin dashboard.
 
