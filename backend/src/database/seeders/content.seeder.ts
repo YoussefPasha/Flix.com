@@ -68,6 +68,9 @@ export class ContentSeeder {
       ratingCount: 25000,
       status: ContentStatus.PUBLISHED,
       viewCount: 150000,
+      thumbnailUrl:
+        'https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_FMjpg_UX1000_.jpg',
+      trailerUrl: 'https://www.youtube.com/watch?v=YoHD9XEInc0',
     };
     const movie1 = contentRepository.create(movie1Data);
     movie1.genres = [sciFiGenre, thrillerGenre, actionGenre].filter(
@@ -93,6 +96,9 @@ export class ContentSeeder {
       ratingCount: 18000,
       status: ContentStatus.PUBLISHED,
       viewCount: 95000,
+      thumbnailUrl:
+        'https://m.media-amazon.com/images/M/MV5BMTY4NzQ2NDUzM15BMl5BanBnXkFtZTgwOTc5OTExMTE@._V1_FMjpg_UX1000_.jpg',
+      trailerUrl: 'https://www.youtube.com/watch?v=gYbW1F_c9eM',
     };
     const movie2 = contentRepository.create(movie2Data);
     movie2.genres = [actionGenre, thrillerGenre].filter(
@@ -119,6 +125,9 @@ export class ContentSeeder {
       ratingCount: 12000,
       status: ContentStatus.PUBLISHED,
       viewCount: 72000,
+      thumbnailUrl:
+        'https://m.media-amazon.com/images/M/MV5BMTk3ODA4Mjc0NF5BMl5BanBnXkFtZTgwNDc1MzQ2OTE@._V1_FMjpg_UX1000_.jpg',
+      trailerUrl: 'https://www.youtube.com/watch?v=w7yqv-usTkI',
     };
     const movie3 = contentRepository.create(movie3Data);
     movie3.genres = [dramaGenre, comedyGenre].filter(
@@ -140,6 +149,9 @@ export class ContentSeeder {
       ratingCount: 30000,
       status: ContentStatus.PUBLISHED,
       viewCount: 200000,
+      thumbnailUrl:
+        'https://m.media-amazon.com/images/M/MV5BMjQwODQwNTg4OV5BMl5BanBnXkFtZTgwMzExMjE3NzE@._V1_FMjpg_UX1000_.jpg',
+      trailerUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
     };
     const show1 = contentRepository.create(show1Data);
     show1.genres = [sciFiGenre, dramaGenre].filter(
@@ -210,6 +222,9 @@ export class ContentSeeder {
       ratingCount: 22000,
       status: ContentStatus.PUBLISHED,
       viewCount: 180000,
+      thumbnailUrl:
+        'https://m.media-amazon.com/images/M/MV5BMjM5MjkwNTc4MV5BMl5BanBnXkFtZTgwNjA3MDk3OTE@._V1_FMjpg_UX1000_.jpg',
+      trailerUrl: 'https://www.youtube.com/watch?v=H5v3kku4y6Q',
     };
     const show2 = contentRepository.create(show2Data);
     show2.genres = [dramaGenre, thrillerGenre].filter(

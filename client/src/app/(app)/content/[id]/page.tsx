@@ -93,6 +93,20 @@ export default async function ContentDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Details */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Thumbnail Image */}
+          {content.thumbnailUrl && (
+            <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-xl">
+              <Image
+                src={content.thumbnailUrl}
+                alt={content.title}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 66vw"
+              />
+            </div>
+          )}
+
           {/* Title and Status */}
           <div>
             <div className="flex items-start gap-3 mb-2">
@@ -207,6 +221,42 @@ export default async function ContentDetailPage({
               <p className="mt-1">{formatReleaseDate(content.updatedAt)}</p>
             </div>
           </div>
+
+          {/* Trailer Section */}
+          {content.trailerUrl && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Trailer</h3>
+              <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-xl bg-black">
+                <video
+                  controls
+                  className="w-full h-full"
+                  poster={content.thumbnailUrl}
+                >
+                  <source src={content.trailerUrl} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Sidebar - Thumbnail (Desktop) */}
+        <div className="lg:col-span-1">
+          {content.thumbnailUrl && (
+            <Card className="sticky top-8">
+              <CardContent className="p-0">
+                <div className="relative w-full aspect-2/3 rounded-lg overflow-hidden">
+                  <Image
+                    src={content.thumbnailUrl}
+                    alt={content.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 33vw"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
 

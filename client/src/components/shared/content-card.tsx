@@ -1,9 +1,14 @@
-import Link from 'next/link';
-import { Star, Calendar, Clock, Film, Tv } from 'lucide-react';
-import { Content, ContentType } from '@/types/api';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { formatRating, formatReleaseDate, formatDuration } from '@/features/content/utils';
+import Link from "next/link";
+import Image from "next/image";
+import { Star, Calendar, Clock, Film, Tv } from "lucide-react";
+import { Content, ContentType } from "@/types/api";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  formatRating,
+  formatReleaseDate,
+  formatDuration,
+} from "@/features/content/utils";
 
 interface ContentCardProps {
   content: Content;
@@ -12,10 +17,21 @@ interface ContentCardProps {
 export function ContentCard({ content }: ContentCardProps) {
   const rating = content.rating ? parseFloat(content.rating) : 0;
   const isMovie = content.type === ContentType.MOVIE;
-  
+
   return (
     <Link href={`/content/${content.id}`} className="group">
       <Card className="h-full overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02] border-2 hover:border-primary/50">
+        {content.thumbnailUrl && (
+          <div className="relative w-full h-48 overflow-hidden bg-muted">
+            <Image
+              src={content.thumbnailUrl}
+              alt={content.title}
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-110"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          </div>
+        )}
         <CardHeader className="p-4 pb-3 space-y-2">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -25,7 +41,7 @@ export function ContentCard({ content }: ContentCardProps) {
                 <Tv className="h-5 w-5 text-primary shrink-0" />
               )}
               <Badge variant="outline" className="shrink-0">
-                {isMovie ? 'Movie' : 'TV Show'}
+                {isMovie ? "Movie" : "TV Show"}
               </Badge>
             </div>
             {rating > 0 && (
@@ -37,17 +53,17 @@ export function ContentCard({ content }: ContentCardProps) {
               </div>
             )}
           </div>
-          
+
           <h3 className="font-bold text-lg line-clamp-2 group-hover:text-primary transition-colors min-h-14">
             {content.title}
           </h3>
         </CardHeader>
-        
+
         <CardContent className="p-4 pt-0 space-y-3">
           <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed min-h-15">
-            {content.description || 'No description available'}
+            {content.description || "No description available"}
           </p>
-          
+
           <div className="flex flex-wrap gap-2">
             {content.genres && content.genres.length > 0 && (
               <>
@@ -64,7 +80,7 @@ export function ContentCard({ content }: ContentCardProps) {
               </>
             )}
           </div>
-          
+
           <div className="flex flex-col gap-2 pt-2 border-t text-xs text-muted-foreground">
             {content.releaseDate && (
               <div className="flex items-center gap-2">
@@ -84,4 +100,3 @@ export function ContentCard({ content }: ContentCardProps) {
     </Link>
   );
 }
-
