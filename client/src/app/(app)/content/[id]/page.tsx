@@ -1,30 +1,28 @@
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
   formatDuration,
   formatRating,
   formatReleaseDate,
-  getContentThumbnail,
   getContentTypeLabel,
 } from "@/features/content/utils";
 import { fetchCached } from "@/lib/fetch-helpers";
-import { Content, Review, ContentStatus } from "@/types/api";
-import { 
-  Calendar, 
-  Clock, 
-  Star, 
-  Eye, 
-  Users, 
-  Play,
-  Film,
-  Tv,
-  MessageSquare,
-  ThumbsUp,
-  ThumbsDown,
+import { Content, ContentStatus, Review } from "@/types/api";
+import {
+  AlertCircle,
+  Calendar,
   CheckCircle,
+  Clock,
+  Eye,
+  Film,
+  MessageSquare,
+  Star,
+  ThumbsDown,
+  ThumbsUp,
+  Tv,
+  Users,
   XCircle,
-  AlertCircle
 } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -65,9 +63,21 @@ export default async function ContentDetailPage({
 
   const getStatusBadge = (status: ContentStatus) => {
     const variants = {
-      published: { variant: "default" as const, icon: CheckCircle, label: "Published" },
-      draft: { variant: "secondary" as const, icon: AlertCircle, label: "Draft" },
-      archived: { variant: "destructive" as const, icon: XCircle, label: "Archived" },
+      published: {
+        variant: "default" as const,
+        icon: CheckCircle,
+        label: "Published",
+      },
+      draft: {
+        variant: "secondary" as const,
+        icon: AlertCircle,
+        label: "Draft",
+      },
+      archived: {
+        variant: "destructive" as const,
+        icon: XCircle,
+        label: "Archived",
+      },
     };
     const config = variants[status];
     const Icon = config.icon;
@@ -94,42 +104,6 @@ export default async function ContentDetailPage({
     <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Hero Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Poster */}
-        <div className="lg:col-span-1 space-y-4">
-          {content.thumbnailUrl ? (
-            <div className="relative aspect-2/3 w-full rounded-lg overflow-hidden shadow-2xl">
-              <Image
-                src={getContentThumbnail(content)}
-                alt={content.title}
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-          ) : (
-            <div className="relative aspect-2/3 w-full rounded-lg overflow-hidden shadow-2xl bg-muted flex items-center justify-center">
-              {content.type === "movie" ? (
-                <Film className="h-24 w-24 text-muted-foreground/20" />
-              ) : (
-                <Tv className="h-24 w-24 text-muted-foreground/20" />
-              )}
-            </div>
-          )}
-          
-          {/* Trailer Button */}
-          {content.trailerUrl && (
-            <a
-              href={content.trailerUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md transition-colors"
-            >
-              <Play className="h-4 w-4" />
-              Watch Trailer
-            </a>
-          )}
-        </div>
-
         {/* Main Details */}
         <div className="lg:col-span-2 space-y-6">
           {/* Title and Status */}
@@ -138,7 +112,7 @@ export default async function ContentDetailPage({
               <h1 className="text-4xl font-bold flex-1">{content.title}</h1>
               {getStatusBadge(content.status)}
             </div>
-            
+
             <div className="flex flex-wrap items-center gap-3">
               <Badge variant="outline" className="gap-1">
                 {content.type === "movie" ? (
@@ -148,7 +122,7 @@ export default async function ContentDetailPage({
                 )}
                 {getContentTypeLabel(content.type)}
               </Badge>
-              
+
               {content.rating && parseFloat(content.rating) > 0 && (
                 <div className="flex items-center gap-1 text-sm">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -171,21 +145,21 @@ export default async function ContentDetailPage({
               <Calendar className="h-4 w-4 text-muted-foreground" />
               <span>{formatReleaseDate(content.releaseDate)}</span>
             </div>
-            
+
             {content.duration && (
               <div className="flex items-center gap-1.5">
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <span>{formatDuration(content.duration)}</span>
               </div>
             )}
-            
+
             {content.viewCount !== undefined && (
               <div className="flex items-center gap-1.5">
                 <Eye className="h-4 w-4 text-muted-foreground" />
                 <span>{content.viewCount.toLocaleString()} views</span>
               </div>
             )}
-            
+
             {reviews.length > 0 && (
               <div className="flex items-center gap-1.5">
                 <MessageSquare className="h-4 w-4 text-muted-foreground" />
@@ -294,67 +268,69 @@ export default async function ContentDetailPage({
       )}
 
       {/* Seasons & Episodes (for TV Shows) */}
-      {content.type === "show" && content.seasons && content.seasons.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Tv className="h-5 w-5" />
-              Seasons & Episodes
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {content.seasons.map((season) => (
-              <div key={season.id} className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <h3 className="text-lg font-semibold">
-                    Season {season.seasonNumber}
-                  </h3>
-                  <Badge variant="outline">
-                    {formatReleaseDate(season.releaseDate)}
-                  </Badge>
-                  {season.episodes && (
-                    <span className="text-sm text-muted-foreground">
-                      {season.episodes.length} episodes
-                    </span>
-                  )}
-                </div>
-                
-                {season.episodes && season.episodes.length > 0 && (
-                  <div className="space-y-2">
-                    {season.episodes.map((episode) => (
-                      <div
-                        key={episode.id}
-                        className="flex items-start gap-3 p-3 rounded-lg border bg-card hover:bg-accent transition-colors"
-                      >
-                        <div className="shrink-0 w-12 h-12 rounded bg-muted flex items-center justify-center font-semibold">
-                          {episode.episodeNumber}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium">{episode.title}</h4>
-                          <p className="text-sm text-muted-foreground line-clamp-2">
-                            {episode.description}
-                          </p>
-                          <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              {formatDuration(episode.duration)}
-                            </span>
-                            {episode.videoUrl && (
-                              <Badge variant="outline" className="text-xs">
-                                Available
-                              </Badge>
-                            )}
+      {content.type === "show" &&
+        content.seasons &&
+        content.seasons.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Tv className="h-5 w-5" />
+                Seasons & Episodes
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {content.seasons.map((season) => (
+                <div key={season.id} className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-lg font-semibold">
+                      Season {season.seasonNumber}
+                    </h3>
+                    <Badge variant="outline">
+                      {formatReleaseDate(season.releaseDate)}
+                    </Badge>
+                    {season.episodes && (
+                      <span className="text-sm text-muted-foreground">
+                        {season.episodes.length} episodes
+                      </span>
+                    )}
+                  </div>
+
+                  {season.episodes && season.episodes.length > 0 && (
+                    <div className="space-y-2">
+                      {season.episodes.map((episode) => (
+                        <div
+                          key={episode.id}
+                          className="flex items-start gap-3 p-3 rounded-lg border bg-card hover:bg-accent transition-colors"
+                        >
+                          <div className="shrink-0 w-12 h-12 rounded bg-muted flex items-center justify-center font-semibold">
+                            {episode.episodeNumber}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium">{episode.title}</h4>
+                            <p className="text-sm text-muted-foreground line-clamp-2">
+                              {episode.description}
+                            </p>
+                            <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
+                              <span className="flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                {formatDuration(episode.duration)}
+                              </span>
+                              {episode.videoUrl && (
+                                <Badge variant="outline" className="text-xs">
+                                  Available
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      )}
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
 
       <Separator />
 
@@ -376,7 +352,9 @@ export default async function ContentDetailPage({
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">User {review.userId.slice(0, 8)}...</span>
+                      <span className="font-medium">
+                        User {review.userId.slice(0, 8)}...
+                      </span>
                       {getReviewStatusIcon(review.status)}
                       <Badge variant="outline" className="text-xs capitalize">
                         {review.status}
@@ -390,13 +368,15 @@ export default async function ContentDetailPage({
                     <div className="text-right text-xs text-muted-foreground space-y-1">
                       <div>Posted: {formatReleaseDate(review.createdAt)}</div>
                       {review.updatedAt !== review.createdAt && (
-                        <div>Updated: {formatReleaseDate(review.updatedAt)}</div>
+                        <div>
+                          Updated: {formatReleaseDate(review.updatedAt)}
+                        </div>
                       )}
                     </div>
                   </div>
-                  
+
                   <p className="text-sm leading-relaxed">{review.reviewText}</p>
-                  
+
                   <div className="flex items-center justify-between pt-2 border-t">
                     <div className="flex items-center gap-4">
                       <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
@@ -408,11 +388,13 @@ export default async function ContentDetailPage({
                         <span>{review.dislikes}</span>
                       </button>
                     </div>
-                    
+
                     <div className="text-xs text-muted-foreground space-x-2">
                       <span>ID: {review.id.slice(0, 8)}...</span>
                       {review.ratingId && (
-                        <span>| Rating ID: {review.ratingId.slice(0, 8)}...</span>
+                        <span>
+                          | Rating ID: {review.ratingId.slice(0, 8)}...
+                        </span>
                       )}
                     </div>
                   </div>
