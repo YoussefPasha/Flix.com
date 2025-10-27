@@ -238,14 +238,6 @@ Install `@nestjs/swagger` and configure in `main.ts`:
 - Document request/response schemas
 - Add authentication requirements
 
-### Authentication & Authorization
-
-For admin endpoints, implement:
-
-- JWT-based authentication guard
-- Role-based authorization (Admin, User)
-- Protect admin routes with `@UseGuards(JwtAuthGuard, RolesGuard)`
-
 ### Validation & Error Handling
 
 - Use `class-validator` decorators in all DTOs
@@ -258,5 +250,3 @@ For admin endpoints, implement:
 - Unit tests for services (mocked repositories)
 - E2E tests for critical endpoints
 - Test data fixtures for development
-
-```
