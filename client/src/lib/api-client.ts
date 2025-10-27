@@ -1,8 +1,12 @@
 import { ApiError } from "@/types/api";
 
-const API_BASE_URL =
+const API_SERVER_URL = process.env.API_URL || "http://localhost:3000/api";
+
+const API_CLIENT_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
-console.log(API_BASE_URL, process.env.NEXT_PUBLIC_API_URL);
+
+const API_BASE_URL =
+  typeof window === "undefined" ? API_SERVER_URL : API_CLIENT_URL;
 
 export class ApiClientError extends Error {
   constructor(

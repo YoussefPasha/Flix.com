@@ -1,17 +1,17 @@
-import { notFound } from 'next/navigation';
-import Image from 'next/image';
-import { fetchCached } from '@/lib/fetch-helpers';
-import { Content, Review } from '@/types/api';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Star, Clock, Calendar } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import {
   formatDuration,
-  formatReleaseDate,
   formatRating,
+  formatReleaseDate,
   getContentThumbnail,
   getContentTypeLabel,
-} from '@/features/content/utils';
+} from "@/features/content/utils";
+import { fetchCached } from "@/lib/fetch-helpers";
+import { Content, Review } from "@/types/api";
+import { Calendar, Clock, Star } from "lucide-react";
+import Image from "next/image";
+import { notFound } from "next/navigation";
 
 async function getContent(id: string) {
   try {
@@ -69,10 +69,12 @@ export default async function ContentDetailPage({
               <h1 className="text-4xl font-bold mb-2">{content.title}</h1>
               <div className="flex items-center gap-3 text-muted-foreground">
                 <Badge>{getContentTypeLabel(content.type)}</Badge>
-                {content.rating > 0 && (
+                {content.rating && parseFloat(content.rating) > 0 && (
                   <div className="flex items-center gap-1">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-medium">{formatRating(content.rating)}</span>
+                    <span className="font-medium">
+                      {formatRating(parseFloat(content.rating))}
+                    </span>
                   </div>
                 )}
               </div>
@@ -125,7 +127,9 @@ export default async function ContentDetailPage({
                 {content.castCrew.slice(0, 6).map((person) => (
                   <div key={person.id} className="text-sm">
                     <div className="font-medium">{person.name}</div>
-                    <div className="text-muted-foreground capitalize">{person.role}</div>
+                    <div className="text-muted-foreground capitalize">
+                      {person.role}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -164,4 +168,3 @@ export default async function ContentDetailPage({
     </div>
   );
 }
-

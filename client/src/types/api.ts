@@ -37,7 +37,7 @@ export interface Content {
   releaseDate: string;
   duration: number;
   type: ContentType;
-  rating: number;
+  rating: string;
   thumbnailUrl?: string;
   trailerUrl?: string;
   status: ContentStatus;

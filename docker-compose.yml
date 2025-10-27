@@ -58,6 +58,7 @@ services:
       - backend
     environment:
       NODE_ENV: development
+      API_URL: ${API_URL:-http://backend:3000/api}
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3000/api}
     ports:
       - '${FRONTEND_PORT:-3001}:3000'

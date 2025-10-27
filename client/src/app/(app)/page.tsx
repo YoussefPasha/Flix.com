@@ -29,7 +29,6 @@ export default async function HomePage() {
     getPopularContent(),
     getTrendingContent(),
   ]);
-
   return (
     <div className="container py-8">
       {/* Hero Section */}
