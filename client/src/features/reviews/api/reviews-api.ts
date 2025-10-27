@@ -16,16 +16,19 @@ export async function fetchReview(id: string) {
 }
 
 export async function createReview(contentId: string, data: ReviewFormData) {
-  return api.post<Review>(`/v1/content/${contentId}/reviews`, data);
+  return api.post<Review>(`/v1/content/${contentId}/reviews`, {
+    ...data,
+    contentId,
+  });
 }
 
 export async function updateReview(id: string, data: Partial<ReviewFormData> & { userId: string }) {
   return api.patch<Review>(`/v1/reviews/${id}`, data);
 }
 
-export async function deleteReview(id: string, userId: string) {
+export async function deleteReview(id: string, userId: string, contentId?: string) {
   return api.delete<void>(`/v1/reviews/${id}`, {
-    body: JSON.stringify({ userId }),
+    body: JSON.stringify({ userId, contentId }),
   });
 }
 

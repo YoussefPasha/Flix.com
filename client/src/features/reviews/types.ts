@@ -6,6 +6,7 @@ export type { Review, ReviewStatus };
 export const reviewSchema = z.object({
   reviewText: z.string().min(10, 'Review must be at least 10 characters').max(2000),
   userId: z.string().min(1, 'User ID is required'),
+  contentId: z.string().uuid().optional(),
 });
 
 export type ReviewFormData = z.infer<typeof reviewSchema>;

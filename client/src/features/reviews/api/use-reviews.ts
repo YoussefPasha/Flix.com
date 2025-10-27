@@ -58,8 +58,8 @@ export function useDeleteReview() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, userId }: { id: string; userId: string }) =>
-      deleteReview(id, userId),
+    mutationFn: ({ id, userId, contentId }: { id: string; userId: string; contentId?: string }) =>
+      deleteReview(id, userId, contentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reviews'] });
     },

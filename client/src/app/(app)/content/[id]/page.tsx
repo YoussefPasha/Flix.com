@@ -16,16 +16,14 @@ import {
   Clock,
   Eye,
   Film,
-  MessageSquare,
   Star,
-  ThumbsDown,
-  ThumbsUp,
   Tv,
   Users,
   XCircle,
 } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { ReviewsSection } from "./_components/reviews-section";
 
 async function getContent(id: string) {
   try {
@@ -87,17 +85,6 @@ export default async function ContentDetailPage({
         {config.label}
       </Badge>
     );
-  };
-
-  const getReviewStatusIcon = (status: string) => {
-    switch (status) {
-      case "approved":
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case "rejected":
-        return <XCircle className="h-4 w-4 text-red-500" />;
-      default:
-        return <AlertCircle className="h-4 w-4 text-yellow-500" />;
-    }
   };
 
   return (
@@ -162,7 +149,6 @@ export default async function ContentDetailPage({
 
             {reviews.length > 0 && (
               <div className="flex items-center gap-1.5">
-                <MessageSquare className="h-4 w-4 text-muted-foreground" />
                 <span>{reviews.length} reviews</span>
               </div>
             )}
@@ -335,80 +321,7 @@ export default async function ContentDetailPage({
       <Separator />
 
       {/* Reviews Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5" />
-            Reviews ({reviews.length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {reviews.length > 0 ? (
-            <div className="space-y-4">
-              {reviews.map((review) => (
-                <div
-                  key={review.id}
-                  className="border rounded-lg p-4 space-y-3 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">
-                        User {review.userId.slice(0, 8)}...
-                      </span>
-                      {getReviewStatusIcon(review.status)}
-                      <Badge variant="outline" className="text-xs capitalize">
-                        {review.status}
-                      </Badge>
-                      {review.isModerated && (
-                        <Badge variant="secondary" className="text-xs">
-                          Moderated
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="text-right text-xs text-muted-foreground space-y-1">
-                      <div>Posted: {formatReleaseDate(review.createdAt)}</div>
-                      {review.updatedAt !== review.createdAt && (
-                        <div>
-                          Updated: {formatReleaseDate(review.updatedAt)}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <p className="text-sm leading-relaxed">{review.reviewText}</p>
-
-                  <div className="flex items-center justify-between pt-2 border-t">
-                    <div className="flex items-center gap-4">
-                      <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                        <ThumbsUp className="h-4 w-4" />
-                        <span>{review.likes}</span>
-                      </button>
-                      <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                        <ThumbsDown className="h-4 w-4" />
-                        <span>{review.dislikes}</span>
-                      </button>
-                    </div>
-
-                    <div className="text-xs text-muted-foreground space-x-2">
-                      <span>ID: {review.id.slice(0, 8)}...</span>
-                      {review.ratingId && (
-                        <span>
-                          | Rating ID: {review.ratingId.slice(0, 8)}...
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>No reviews yet. Be the first to review this content!</p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      <ReviewsSection contentId={id} initialReviews={reviews} />
     </div>
   );
 }
