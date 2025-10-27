@@ -85,7 +85,9 @@ async function SearchResults({ params }: { params: SearchQueryParams }) {
     return <EmptyState query={params.q} />;
   }
 
-  const totalPages = Math.ceil(results.total / (params.limit || 20));
+  // Use total from API or fallback to data length if total is missing
+  const total = results.total ?? results.data.length;
+  const totalPages = Math.ceil(total / (params.limit || 20));
 
   return (
     <div className="space-y-6">
@@ -95,10 +97,10 @@ async function SearchResults({ params }: { params: SearchQueryParams }) {
           <div className="flex items-center gap-1.5">
             <span className="text-sm text-muted-foreground">Found</span>
             <span className="text-lg font-bold text-foreground">
-              {results.total.toLocaleString()}
+              {total.toLocaleString()}
             </span>
             <span className="text-sm text-muted-foreground">
-              {results.total === 1 ? "result" : "results"}
+              {total === 1 ? "result" : "results"}
             </span>
           </div>
         </div>
@@ -148,7 +150,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
     type: params.type as ContentType | undefined,
     genre: params.genre,
     year: params.year ? parseInt(params.year) : undefined,
-    sort: params.sort || "releaseDate",
+    sort: params.sort || "title",
     page: params.page ? parseInt(params.page) : 1,
     limit: params.limit ? parseInt(params.limit) : 20,
   };

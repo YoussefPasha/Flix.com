@@ -1,13 +1,18 @@
-import { api } from '@/lib/api-client';
-import { Genre } from '@/types/api';
-import { GenreFormData } from '../types';
+import { api } from "@/lib/api-client";
+import { fetchCached } from "@/lib/fetch-helpers";
+import { Genre } from "@/types/api";
+import { GenreFormData } from "../types";
 
 export async function fetchGenres() {
-  return api.get<Genre[]>('/v1/admin/genres');
+  return fetchCached<Genre[]>("/v1/admin/genres", { revalidate: 3600 });
+}
+
+export async function fetchGenresClient() {
+  return api.get<Genre[]>("/v1/admin/genres");
 }
 
 export async function fetchGenreTree() {
-  return api.get<Genre[]>('/v1/admin/genres/tree');
+  return api.get<Genre[]>("/v1/admin/genres/tree");
 }
 
 export async function fetchGenre(id: string) {
@@ -19,7 +24,7 @@ export async function fetchGenreBySlug(slug: string) {
 }
 
 export async function createGenre(data: GenreFormData) {
-  return api.post<Genre>('/v1/admin/genres', data);
+  return api.post<Genre>("/v1/admin/genres", data);
 }
 
 export async function updateGenre(id: string, data: Partial<GenreFormData>) {
@@ -29,4 +34,3 @@ export async function updateGenre(id: string, data: Partial<GenreFormData>) {
 export async function deleteGenre(id: string) {
   return api.delete<void>(`/v1/admin/genres/${id}`);
 }
-

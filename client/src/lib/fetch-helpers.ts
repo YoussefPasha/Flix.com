@@ -57,7 +57,8 @@ export async function fetchDynamic<T>(
 ): Promise<T> {
   const { params, ...fetchOptions } = options;
   const url = buildUrl(endpoint, params);
-
+  console.log(url);
+  
   const response = await fetch(url, {
     ...fetchOptions,
     cache: "no-store",
